@@ -3,6 +3,8 @@ import Navbar from "../../components/Navbar/Navbar";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Label } from 'recharts';
 import Switch from "../../components/Switch/Switch";
 import Table from "../../components/Table/Table";
+import MultiRangeSlider from '../../components/MultiRangeSlider/MultiRangeSlider';
+import { useState, useEffect } from 'react';
 
 const data = [
     {
@@ -49,7 +51,21 @@ const data = [
     },
 ]
 
-function Prediction() {
+function Prediction(props) {
+    const [filter, setFilter] = useState(false);
+    function filterVisibility() {
+        setFilter(!filter);
+        console.log(filter);
+    }
+    const [map, changeMap] = useState('map1');
+    function changeMapVisibility() {
+        if (map == 'map1') {
+            changeMap('map2')
+        } else if (map == 'map2') {
+            changeMap('map1')
+        }
+    }
+    
     return (
         <>
             <Navbar />
@@ -88,13 +104,61 @@ function Prediction() {
                 </UpperWrapper>
                 <TableWrapper>
                     <FilterWrapper>
-                        <FilterButton>Filter</FilterButton>
+                        <FilterButton onClick={filterVisibility}>Filter</FilterButton>
                     </FilterWrapper>
-                    {/* <FilterOptions></FilterOptions> */}
+                    <FilterOptions style={filter ? {display: 'flex'} : {display: 'none'}}>
+                        <BR>
+                            <div style={{width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px'}}>
+                                <p style={{fontWeight: '500', fontSize: '24px', marginBottom: '23px'}}>Burst time</p>
+                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)}/>
+                            </div>
+                            <div style={{width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px'}}>
+                                <p style={{fontWeight: '500', fontSize: '24px', marginBottom: '23px'}}>Rise time</p>
+                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)}/>
+                            </div>
+                        </BR>
+                        <DP>
+                            <div style={{width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px'}}>
+                                <p style={{fontWeight: '500', fontSize: '24px', marginBottom: '23px'}}>Burst time</p>
+                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)}/>
+                            </div>
+                            <div style={{width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px'}}>
+                                <p style={{fontWeight: '500', fontSize: '24px', marginBottom: '23px'}}>Rise time</p>
+                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)}/>
+                            </div>
+                        </DP>
+                        <Classification>
+                            <div style={{width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px', display: 'flex', flexDirection: 'column'}}>
+                                <p style={{fontWeight: '500', fontSize: '24px', marginBottom: '23px'}}>Classification</p>
+                                <span style={{display: 'flex', flexDirection: 'row', gap: '17px'}}>
+                                    <input type="checkbox" id="Option1" name="Option1" value="Option 1" style={{marginBottom: '24px', width: '24px', height: '24px'}} />
+                                    <label for="Option1" style={{fontSize: '24px'}}>Parameter</label>
+                                </span>
+                                <span style={{display: 'flex', flexDirection: 'row', gap: '17px'}}>
+                                    <input type="checkbox" id="Option2" name="Option2" value="Option 2" style={{marginBottom: '24px', width: '24px', height: '24px'}} />
+                                    <label for="Option2" style={{fontSize: '24px'}}>Parameter</label>
+                                </span>
+                                <span style={{display: 'flex', flexDirection: 'row', gap: '17px'}}>
+                                    <input type="checkbox" id="Option3" name="Option3" value="Option 3" style={{marginBottom: '24px', width: '24px', height: '24px'}} />
+                                    <label for="Option3" style={{fontSize: '24px'}}>Parameter</label>
+                                </span>
+                                <span style={{display: 'flex', flexDirection: 'row', gap: '17px'}}>
+                                    <input type="checkbox" id="Option4" name="Option4" value="Option 4" style={{marginBottom: '24px', width: '24px', height: '24px'}} />
+                                    <label for="Option4" style={{fontSize: '24px'}}>Parameter</label>
+                                </span>
+                            </div>
+                        </Classification>
+                    </FilterOptions>
                     <TableMenu>
-                        <p>Burst start coordinate (x)</p>
-                        <p>Burst start coordinate (y)</p>
-                        <p>Burst </p>
+                        <p style={{color: '#F6C96F'}}>Burst start coordinate (x)</p>
+                        <p style={{color: '#F6C96F'}}>Burst start coordinate (y)</p>
+                        <p style={{color: '#F6C96F'}}>Burst peak coordinate (x)</p>
+                        <p style={{color: '#F6C96F'}}>Burst peak coordinate (y)</p>
+                        <p style={{color: '#F6C96F'}}>Burst end coordinate (x)</p>
+                        <p style={{color: '#F6C96F'}}>Burst end coordinate (y)</p>
+                        <p style={{color: '#F6C96F'}}>Total burst time</p>
+                        <p style={{color: '#F6C96F'}}>Rise time</p>
+                        <p style={{color: '#F6C96F'}}>Decay time</p>
                     </TableMenu>
                     <Table></Table>
                 </TableWrapper>
@@ -192,8 +256,55 @@ const FilterButton = styled.button`
     padding: 18px 20px;
     border-radius: 8px;
     background: #F6C96F;
+    border: none;
+    cursor: pointer;
+    &:hover {
+        /* border: 1px solid white; */
+        background: #F6C96Fe1;
+    }
 `
 
 const TableMenu = styled.div`
     background: rgba(237, 237, 237, 0.3);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 63px;
+    padding: 26px 36px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+`
+
+const FilterOptions = styled.div`
+    height: fit-content;
+    padding: 30px;
+    display: flex;
+    flex-direction: row;
+    gap: 178px;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(237, 237, 237, 0.3);
+    margin-bottom: 77px;
+    border-radius: 18.5px;
+`
+
+const BR = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 56.5px;
+`
+const DP = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 56.5px;
+`
+const Classification = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 56.5px;
+    padding-right: 168px;
 `
