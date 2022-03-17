@@ -14,7 +14,7 @@ const NavbarWrapper = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 120px;
+    padding: 90px 120px;
 `;
 
 const Title = styled.h1`

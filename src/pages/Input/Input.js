@@ -42,9 +42,8 @@ function Input() {
             <Navbar />
             <InputWrapper>
                 <InputData>Input Data</InputData>
-                {/* <InputBox type='file' onChange={onFileChange} /> */}
                 <InputBoxWrapper>
-                    <div>Input</div>
+                    <InputBox type='file' onChange={onFileChange} />
                     <CloudIcon src={CloudComputing}/>
                 </InputBoxWrapper>
                 <IconButtonWrapper>
@@ -67,11 +66,11 @@ const InputWrapper = styled.div`
     flex-direction: column;
     gap: 65px;
     padding: 30px;
+    border-radius: 12px;
 `
 const InputData = styled.div`
     font-size: 32px;
     color: #F6C96F;
-    margin-bottom: 65px;
 `
 
 const InputBoxWrapper = styled.div`
@@ -79,10 +78,12 @@ const InputBoxWrapper = styled.div`
     border-radius: 8px;
     display: flex;
     flex-direction: row;
-    justify-content: 'justify-between';
+    justify-content: space-between;
     align-items:  center;
     width: 469px;
     height: 64px;
+    padding-left: 16px;
+    padding-right: 16px;
 `;
 
 const CloudIcon = styled.img`
@@ -92,13 +93,9 @@ const CloudIcon = styled.img`
 
 const InputBox = styled.input`
     width: 469px;
-    height: 64px;
-    margin-bottom: 65px;
     border-radius: 8px;
-    background: rgba(237, 237, 237, 0.1);
-    border: 1px solid #F6C96F;
     color: #fff;
-    font-size: 24px;
+    font-size: 16px;
 `
 
 const IconButtonWrapper = styled.div`
@@ -115,4 +112,8 @@ const InputButton = styled.button`
     border: none;
     width: 86px;
     height: 56px;
+    cursor: pointer;
+    &:hover {
+        border: 2px solid #fff;
+    }
 `
