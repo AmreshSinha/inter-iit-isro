@@ -1,4 +1,17 @@
+Ensure that the system is Linux based with xsmgenspec and xsmcomputeflex installed.
 ### Instalation
+## For Backend
+Install Python dependencies 
+``` bash
+$ pip3 install -r requirements.txt
+```
+
+Start the development server by running 
+``` bash
+# dev server with hot reload at http://localhost:8080
+$ python app.py
+```
+## For Frontend
 
 ``` bash
 $ npm install
