@@ -124,9 +124,9 @@ function Prediction() {
             }
             if(classFluxByBCShow){
                 var flux = fluxload.Peak_Flux__y_
-                var bc = fluxload.background_count_Flux_vs_Time
+                
                 var fluxbcclass = fluxload.Classification_by_Flux_Peak_By_Background_Count
-                data.push({ 'peak flux': flux,'background_count':bc, 'flux_bc_class': fluxbcclass })
+                data.push({ 'peak flux': flux, 'flux_bc_class': fluxbcclass })
             }
             setClassificationData(data)
             console.log(data)
@@ -156,6 +156,26 @@ function Prediction() {
     //         )
     //     }
     // }
+
+    let classificationDataLength = classificationData.length;
+    let filterIndents = []
+    classificationData.forEach(element => {
+        filterIndents.push(
+            <div style={{display: 'flex', flexDirection: 'row', gap: '50px', background: 'rgba(237, 237, 237, 0.2)', width: 'fit-content', borderRadius: '8px', padding: '10px'}}>
+                <p>{Object.keys(element)[0]}</p>
+                <p>{Object.keys(element)[1]}</p>
+            </div>
+        )
+        console.log(Object.keys(element)[0])
+        console.log(element)
+        console.log(Object.keys(element)[0].length)
+        for (var i = 0; i < element[Object.keys(element)[0]].length; i++) {
+            filterIndents.push(
+                <div style={{display: 'flex', flexDirection: 'row', gap: '50px', marginBottom: '10px'}}>{element[Object.keys(element)[0]]}</div>
+            )
+            
+        }
+    });
 
     return (
         <>
@@ -194,10 +214,10 @@ function Prediction() {
                     </InformationCard> */}
                 </UpperWrapper>
                 <TableWrapper>
-                    <FilterWrapper>
+                    {/* <FilterWrapper>
                         <FilterButton onClick={filterVisibility}>Filter</FilterButton>
-                    </FilterWrapper>
-                    <FilterOptions style={filter ? { display: 'flex' } : { display: 'none' }}>
+                    </FilterWrapper> */}
+                    {/* <FilterOptions style={filter ? { display: 'flex' } : { display: 'none' }}> */}
                         {/* <BR>
                             <div style={{ width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px' }}>
                                 <p style={{ fontWeight: '500', fontSize: '24px', marginBottom: '23px' }}>Burst time</p>
@@ -218,7 +238,7 @@ function Prediction() {
                                 <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)} />
                             </div>
                         </DP> */}
-                        <Classification>
+                        {/* <Classification>
                             <div style={{ width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px', display: 'flex', flexDirection: 'column' }}>
                                 <p style={{ fontWeight: '500', fontSize: '24px', marginBottom: '23px' }}>Classification</p>
                                 <span style={{ display: 'flex', flexDirection: 'row', gap: '17px' }}>
@@ -251,9 +271,12 @@ function Prediction() {
                                     <label for="Option4" style={{fontSize: '24px'}}>Classification By Ratio of Flux Peak and Background Count</label>
                                 </span>
                             </div>
-                        </Classification>
-                    </FilterOptions>
-                    {!map ? (<TableMenu>
+                        </Classification> */}
+                    {/* </FilterOptions> */}
+                    {/* <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                        {filterIndents}
+                    </div> */}
+                    {/* {!map ? (<TableMenu>
                         <p style={{ color: '#F6C96F' }}>Peak flux coordinate (x)</p>
                         <p style={{ color: '#F6C96F' }}>Peak flux coordinate (y)</p>
                         <p style={{ color: '#F6C96F' }}>Peak flux/ average ratio</p>
@@ -268,9 +291,30 @@ function Prediction() {
                         <p style={{ color: '#F6C96F' }}>Total burst time</p>
                         <p style={{ color: '#F6C96F' }}>Rise time</p>
                         <p style={{ color: '#F6C96F' }}>Decay time</p>
-                    </TableMenu>)}
+                    </TableMenu>)} */}
+                    <MapTitle>Rate vs Time</MapTitle>
+                    <TableMenu style={{marginTop: '16px'}}>
+                        <p style={{ color: '#F6C96F' }}>Burst start coordinate (x)</p>
+                        <p style={{ color: '#F6C96F' }}>Burst start coordinate (y)</p>
+                        <p style={{ color: '#F6C96F' }}>Burst peak coordinate (x)</p>
+                        <p style={{ color: '#F6C96F' }}>Burst peak coordinate (y)</p>
+                        <p style={{ color: '#F6C96F' }}>Burst end coordinate (x)</p>
+                        <p style={{ color: '#F6C96F' }}>Burst end coordinate (y)</p>
+                        <p style={{ color: '#F6C96F' }}>Total burst time</p>
+                        <p style={{ color: '#F6C96F' }}>Rise time</p>
+                        <p style={{ color: '#F6C96F' }}>Decay time</p>
+                    </TableMenu>
+                    {lcload ? <LCTable props={lcload} /> : <p>Loading...</p>}
+                    <MapTitle style={{marginTop: '32px'}}>Flux vs Time</MapTitle>
+                    <TableMenu style={{marginTop: '16px'}}>
+                        <p style={{ color: '#F6C96F' }}>Peak flux coordinate (x)</p>
+                        <p style={{ color: '#F6C96F' }}>Peak flux coordinate (y)</p>
+                        <p style={{ color: '#F6C96F' }}>Peak flux/ average ratio</p>
+                        <p style={{ color: '#F6C96F' }}>Category by peak flux</p>
+                    </TableMenu>
+                    {fluxload ? <FluxTable props={fluxload} /> : <p>Loading...</p>}
                     {/* {lcload ? <p>{lcload.start_coordinate__x_['0']}</p> : <p>Loading...</p>} */}
-                    {lcload ? (map ? (<LCTable props={lcload} />) : (<FluxTable props={fluxload} />)) : <p>Loading...</p>}
+                    {/* {lcload ? (map ? (<LCTable props={lcload} />) : (<FluxTable props={fluxload} />)) : <p>Loading...</p>} */}
                 </TableWrapper>
             </MainWrapper>
         </>
