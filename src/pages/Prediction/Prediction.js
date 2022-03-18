@@ -17,11 +17,7 @@ const CustomizedDot = (props) => {
             </svg>
         );
     }
-    return (
-        <svg x={cx - 5} y={cy - 5} height="10" width="10">
-            <circle r="40" stroke="black" strokeWidth="3" fill="red" />
-        </svg>
-    );
+    return null;
 };
 
 function Prediction() {
@@ -38,16 +34,13 @@ function Prediction() {
     const fluxdata = [];
     useEffect(() => {
         axios.get('http://localhost:8080/api/data/lc').then(res => {
-            console.log(JSON.parse(res.data));
             setlcLoad(JSON.parse(res.data));
         })
         axios.get('http://localhost:8080/api/data/flux').then(res => {
             setfluxLoad(JSON.parse(res.data));
-            console.log(JSON.parse(res.data));
         })
         axios.get('http://localhost:8080/api/data/lcfull').then(res => {
             setlcDatapoints(JSON.parse(res.data));
-            console.log(JSON.parse(res.data));
         })
     }, [])
     useEffect(() => {
@@ -73,31 +66,31 @@ function Prediction() {
         // }
     }
 
-    if (lcload) {
-        for (var i = 0; i < Object.keys(lcload.start_coordinate__x_).length; i++) {
+    if (lcDatapoints) {
+        for (var i = 0; i < Object.keys(lcDatapoints.rate).length; i++) {
             lcdata.push(
                 {
-                    x: lcload.start_coordinate__x_[`${i}`],
-                    y: lcload.start_coordinate__y_[`${i}`],
+                    x: lcDatapoints.time[`${i}`],
+                    y: lcDatapoints.rate[`${i}`],
                     peak: false
                 }
             )
-            lcdata.push(
-                {
-                    x: lcload.peak_coordinate__x_[`${i}`],
-                    y: lcload.peak_coordinate__y_[`${i}`],
-                    classfication_by_area: lcload.classfication_by_area[`${i}`],
-                    classification_by_duration: lcload.classification_by_duration[`${i}`],
-                    peak: true,
-                }
-            )
-            lcdata.push(
-                {
-                    x: lcload.end_coordinate__x_[`${i}`],
-                    y: lcload.end_coordinate__y_[`${i}`],
-                    peak: false
-                }
-            )
+            // lcdata.push(
+            //     {
+            //         x: lcload.peak_coordinate__x_[`${i}`],
+            //         y: lcload.peak_coordinate__y_[`${i}`],
+            //         classfication_by_area: lcload.classfication_by_area[`${i}`],
+            //         classification_by_duration: lcload.classification_by_duration[`${i}`],
+            //         peak: true,
+            //     }
+            // )
+            // lcdata.push(
+            //     {
+            //         x: lcload.end_coordinate__x_[`${i}`],
+            //         y: lcload.end_coordinate__y_[`${i}`],
+            //         peak: false
+            //     }
+            // )
         }
         console.log(lcdata)
     }
