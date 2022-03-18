@@ -5,7 +5,8 @@ import axios from "axios";
 import CloudComputing from './Octicons-cloud-upload.svg';
 
 function Input() {
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [uploadState, changeUploadState] = useState(false);
+    let [selectedFile, setSelectedFile] = useState(null);
     function onFileChange(event) {
         setSelectedFile( selectedFile= event.target.files[0] );
     };
@@ -15,16 +16,29 @@ function Input() {
 
         // Update the formData object
         formData.append(
-            'myFile',
-            selectedFile,
-            selectedFile.name
+            'imgfile',
+            selectedFile
         )
 
         // Details of the uploaded file
         console.log(selectedFile);
 
         // Sending data to backend
-        axios.post('/api/upload', formData)
+        // axios.post('http://172.20.10.2:8080/api/upload', formData).then(res => {
+        //     changeUploadState(uploadState=true);
+        //     console.log(uploadState)
+        // })
+        fetch('http://localhost:8080/api/upload', 
+            {
+                method: 'POST',
+                body: formData
+            }
+        )
+        .then(res => res.json())
+        .then(res => {if (res.status == 'ok') {
+            window.location = '/prediction'
+        }})
+        .catch(err => console.error('Error:', err))
     }
     function fileData() {
         if (selectedFile) {
@@ -50,7 +64,6 @@ function Input() {
                     <InputButton onClick={onFileUpload}>Upload</InputButton>
                 </IconButtonWrapper>
             </InputWrapper>
-            {fileData()}
         </>
     )
 }
