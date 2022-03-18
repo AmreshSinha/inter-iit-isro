@@ -37,15 +37,15 @@ function Prediction() {
     const lcdata = [];
     const fluxdata = [];
     useEffect(() => {
-        axios.get('http://172.20.10.2:8080/api/data/lc').then(res => {
+        axios.get('http://localhost:8080/api/data/lc').then(res => {
             console.log(JSON.parse(res.data));
             setlcLoad(JSON.parse(res.data));
         })
-        axios.get('http://172.20.10.2:8080/api/data/flux').then(res => {
+        axios.get('http://localhost:8080/api/data/flux').then(res => {
             setfluxLoad(JSON.parse(res.data));
             console.log(JSON.parse(res.data));
         })
-        axios.get('http://172.20.10.2:8080/api/data/lcfull').then(res => {
+        axios.get('http://localhost:8080/api/data/lcfull').then(res => {
             setlcDatapoints(JSON.parse(res.data));
             console.log(JSON.parse(res.data));
         })
