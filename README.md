@@ -1,5 +1,5 @@
 Ensure that the system is Linux based with xsmgenspec and xsmcomputeflex installed.
-### Instalation
+### Installation
 ## For Backend
 Install Python dependencies 
 ``` bash
