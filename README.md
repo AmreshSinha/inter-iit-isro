@@ -1,4 +1,5 @@
 Ensure that the system is Linux based with xsmgenspec and xsmcomputeflex installed. Follow the following steps for installation of xsmdas:
+## Installation of xsmdas software
 #### Prerequisites for xsmdas
 1. OS: Linux/Unix (CentOS 7.0+, Ubuntu 14.04+, RHEL 6.5+, Fedora 20.0+, SLED 11.0+,
 OS X 10.13+)
