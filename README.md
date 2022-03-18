@@ -56,8 +56,8 @@ Change line 1 of xsmcomputeflux.py to:
 #!/ysr/bin/env python3.9
 ```
 (Note: Most of the above part of Installation steps was taken from the official XSM Data Analysis Guide provided by Physics Research Laboratory Ahmedabad and can be accessed from: https://pradan.issdc.gov.in/pradan/protected/downloadFile/xsm/ch2_xsm_data_analysis_guide.pdf)
-### Installation
-## For Backend
+## Installation
+### For Backend
 Install Python dependencies 
 ``` bash
 $ pip3 install -r requirements.txt
@@ -68,7 +68,7 @@ Start the development server by running
 # dev server with hot reload at http://localhost:8080
 $ python app.py
 ```
-## For Frontend
+### For Frontend
 
 ``` bash
 $ npm install
