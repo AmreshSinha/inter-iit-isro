@@ -18,7 +18,7 @@ export PATH="$xsmdas/bin:$xsmdas/scripts:$PATH"
 export LD_LIBRARY_PATH="$xsmdas/lib/":$LD_LIBRARY_PATH
 export PFILES="$PFILES:$xsmdas/pfiles"
 ```
-here '<path to xsmdas directory>' is to be replaced with the absolute path under which
+here 'path to xsmdas directory' is to be replaced with the absolute path under which
 xsmdas directory is present
 source ~/.bashrc file as:
 ```
