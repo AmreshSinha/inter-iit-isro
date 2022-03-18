@@ -28,7 +28,7 @@ function Input() {
         //     changeUploadState(uploadState=true);
         //     console.log(uploadState)
         // })
-        fetch('http://172.20.10.2:8080/api/upload', 
+        fetch('http://localhost:8080/api/upload', 
             {
                 method: 'POST',
                 body: formData
