@@ -3,10 +3,11 @@ import styled from "styled-components";
 function Navbar() {
     return (
         <NavbarWrapper>
-            <Title>IIT Guwahati</Title>
+            <Title>Team 11</Title>
             <RightPart>
                 <a href="/" style={fontXL}>Home</a>
                 <a href="/input" style={fontXL}>Input</a>
+                <a href="/prediction" style={fontXL}>Output</a>
             </RightPart>
         </NavbarWrapper>
     );

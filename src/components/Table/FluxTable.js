@@ -2,24 +2,20 @@ import React from "react";
 import styled from "styled-components";
 
 function Table(props) {
-  console.log(Object.keys(props.props.start_coordinate__x_).length);
+  console.log(props);
+  console.log(Object.keys(props.props.Peak_Flux__x_).length);
   var indents = [];
   for (
     var i = 0;
-    i < Object.keys(props.props.start_coordinate__x_).length;
+    i < Object.keys(props.props.Peak_Flux__x_).length;
     i++
   ) {
     indents.push(
       <TableWrapper>
-        <BurstStartX>{props.props.start_coordinate__x_[`${i}`]}</BurstStartX>
-        <BurstStartY>{props.props.start_coordinate__y_[`${i}`]}</BurstStartY>
-        <BurstPeakX>{props.props.peak_coordinate__x_[`${i}`]}</BurstPeakX>
-        <BurstPeakY>{props.props.peak_coordinate__y_[`${i}`]}</BurstPeakY>
-        <BurstEndX>{props.props.end_coordinate__x_[`${i}`]}</BurstEndX>
-        <BurstEndY>{props.props.end_coordinate__y_[`${i}`]}</BurstEndY>
-        <TotalBurstTime>{props.props.total_burst_time[`${i}`]}</TotalBurstTime>
-        <RiseTime>{props.props.rise_time[`${i}`]}</RiseTime>
-        <DecayTime>{props.props.decay_time[`${i}`]}</DecayTime>
+        <BurstStartX>{props.props.Peak_Flux__x_[`${i}`]}</BurstStartX>
+        <BurstStartY>{props.props.Peak_Flux__y_[`${i}`]}</BurstStartY>
+        <BurstPeakX>{props.props.background_count_Flux_vs_Time[`${i}`]}</BurstPeakX>
+        <BurstPeakY>{props.props.Classification_by_Flux_Peak[`${i}`]}</BurstPeakY>
       </TableWrapper>
     );
   }

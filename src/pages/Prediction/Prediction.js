@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
 import Switch from "../../components/Switch/Switch";
 import LCTable from "../../components/Table/LCTable";
+import FluxTable from '../../components/Table/FluxTable'
 import MultiRangeSlider from '../../components/MultiRangeSlider/MultiRangeSlider';
 import { useState, useEffect } from 'react';
 import axios from "axios";
@@ -26,6 +27,7 @@ const CustomizedDot = (props) => {
 function Prediction() {
     const [lcload, setlcLoad] = useState(null);
     const [fluxload, setfluxLoad] = useState(null);
+    const [lcDatapoints, setlcDatapoints] = useState(null)
     const [mapChangeButtonValue, setMapChangeButtonValue] = useState('');
     const [classFluxShow, setClassFluxShow] = useState(false)
     const [classAreaShow, setClassAreaShow] = useState(false)
@@ -43,6 +45,10 @@ function Prediction() {
             setfluxLoad(JSON.parse(res.data));
             console.log(JSON.parse(res.data));
         })
+        axios.get('http://172.20.10.2:8080/api/data/lcfull').then(res => {
+            setlcDatapoints(JSON.parse(res.data));
+            console.log(JSON.parse(res.data));
+        })
     }, [])
     useEffect(() => {
         if (lcload) {
@@ -56,14 +62,15 @@ function Prediction() {
         setFilter(!filter);
         console.log(filter);
     }
-    const [map, changeMap] = useState('Flux vs Time');
+    const [map, changeMap] = useState('false');
     function changeMapVisibility() {
-        console.log('I ran!')
-        if (map == 'Rate vs Time') {
-            changeMap('Flux vs Time')
-        } else if (map == 'Flux vs Time') {
-            changeMap('Rate vs Time')
-        }
+        changeMap(!map);
+        // console.log('I ran!')
+        // if (map == 'Rate vs Time') {
+        //     changeMap('Flux vs Time')
+        // } else if (map == 'Flux vs Time') {
+        //     changeMap('Rate vs Time')
+        // }
     }
 
     if (lcload) {
@@ -158,7 +165,7 @@ function Prediction() {
                     <AreaPlotWrapper>
                         <SwitchButtonWrapper>
                             <MapTitle>Map 1</MapTitle>
-                            <MapChangeButton onClick={changeMapVisibility}>{map}</MapChangeButton>
+                            <MapChangeButton onClick={changeMapVisibility}>{map ? "Change to Flux" : "Change to Rate"}</MapChangeButton>
                         </SwitchButtonWrapper>
                         {lcload ? (<ResponsiveContainer>
                             <LineChart
@@ -247,7 +254,12 @@ function Prediction() {
                             </div>
                         </Classification>
                     </FilterOptions>
-                    <TableMenu>
+                    {!map ? (<TableMenu>
+                        <p style={{ color: '#F6C96F' }}>Peak flux coordinate (x)</p>
+                        <p style={{ color: '#F6C96F' }}>Peak flux coordinate (y)</p>
+                        <p style={{ color: '#F6C96F' }}>Peak flux/ average ratio</p>
+                        <p style={{ color: '#F6C96F' }}>Category by peak flux</p>
+                    </TableMenu>) : (<TableMenu>
                         <p style={{ color: '#F6C96F' }}>Burst start coordinate (x)</p>
                         <p style={{ color: '#F6C96F' }}>Burst start coordinate (y)</p>
                         <p style={{ color: '#F6C96F' }}>Burst peak coordinate (x)</p>
@@ -257,9 +269,9 @@ function Prediction() {
                         <p style={{ color: '#F6C96F' }}>Total burst time</p>
                         <p style={{ color: '#F6C96F' }}>Rise time</p>
                         <p style={{ color: '#F6C96F' }}>Decay time</p>
-                    </TableMenu>
+                    </TableMenu>)}
                     {/* {lcload ? <p>{lcload.start_coordinate__x_['0']}</p> : <p>Loading...</p>} */}
-                    {lcload ? <LCTable props={lcload} /> : <p>Loading...</p>}
+                    {lcload ? (map ? (<LCTable props={lcload} />) : (<FluxTable props={fluxload} />)) : <p>Loading...</p>}
                 </TableWrapper>
             </MainWrapper>
         </>

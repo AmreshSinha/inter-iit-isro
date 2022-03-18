@@ -28,7 +28,7 @@ function Input() {
         //     changeUploadState(uploadState=true);
         //     console.log(uploadState)
         // })
-        fetch('http://localhost:8080/api/upload', 
+        fetch('http://172.20.10.2:8080/api/upload', 
             {
                 method: 'POST',
                 body: formData
@@ -64,6 +64,9 @@ function Input() {
                     <InputButton onClick={onFileUpload}>Upload</InputButton>
                 </IconButtonWrapper>
             </InputWrapper>
+            <InputInfoWrapper>
+                File Format Support: FITS, XLS, ASCII
+            </InputInfoWrapper>
         </>
     )
 }
@@ -80,6 +83,7 @@ const InputWrapper = styled.div`
     gap: 65px;
     padding: 30px;
     border-radius: 12px;
+    margin-bottom: 35px;
 `
 const InputData = styled.div`
     font-size: 32px;
@@ -130,3 +134,11 @@ const InputButton = styled.button`
         border: 2px solid #fff;
     }
 `
+
+const InputInfoWrapper = styled.div`
+    width: 501px;
+    background: rgba(237, 237, 237, 0.2);
+    margin-left: 120px;
+    padding: 30px;
+    border-radius: 12px;
+`;
