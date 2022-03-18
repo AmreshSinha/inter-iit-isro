@@ -43,7 +43,8 @@ ch2_xsm_caldb_yyyymmdd.zip to $xsmdas directory as:
 ```
 unzip ch2_xsm_caldb_yyyymmdd.zip -d $xsmdas
 ```
-The caldb files will be extracted to $xsmdas/caldb directory.
+The caldb files will be extracted to $xsmdas/caldb directory
+
 6. Compilation:
 Once the libraries are installed compile XSMDAS with
 ```
