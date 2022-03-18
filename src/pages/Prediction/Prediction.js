@@ -10,14 +10,14 @@ import axios from "axios";
 const CustomizedDot = (props) => {
     const { cx, cy, stroke, payload, value } = props;
     if (props.payload.peak == true) {
-    return (
-        <svg x={cx - 10} y={cy - 10} width="24" height="24" xmlns="http://www.w3.org/2000/svg" fillRule="evenodd" clipRule="evenodd">
-            <path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z" fill="#FFCA00" />
-        </svg>
-    );
+        return (
+            <svg x={cx - 10} y={cy - 10} width="24" height="24" xmlns="http://www.w3.org/2000/svg" fillRule="evenodd" clipRule="evenodd">
+                <path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z" fill="#FFCA00" />
+            </svg>
+        );
     }
     return (
-        <svg x={cx-2} y={cy-2} height="5" width="5">
+        <svg x={cx - 2} y={cy - 2} height="5" width="5">
             <circle r="40" stroke="black" strokeWidth="3" fill="red" />
         </svg>
     );
@@ -27,16 +27,30 @@ function Prediction() {
     const [lcload, setlcLoad] = useState(null);
     const [fluxload, setfluxLoad] = useState(null);
     const [mapChangeButtonValue, setMapChangeButtonValue] = useState('');
+    const [classFluxShow, setClassFluxShow] = useState(false)
+    const [classAreaShow, setClassAreaShow] = useState(false)
+    const [classDurationShow, setClassDurationShow] = useState(false)
+    const [classFluxByBCShow, setClassFluxByBCShow] = useState(false)
+    const [classificationData, setClassificationData] = useState([])
     const lcdata = [];
     const fluxdata = [];
     useEffect(() => {
-        axios.get('http://localhost:8080/api/data/lc').then(res => {
+        axios.get('http://172.20.10.2:8080/api/data/lc').then(res => {
+            console.log(JSON.parse(res.data));
             setlcLoad(JSON.parse(res.data));
         })
-        axios.get('http://localhost:8080/api/data/flux').then(res => {
-            setfluxLoad(res.data);
+        axios.get('http://172.20.10.2:8080/api/data/flux').then(res => {
+            setfluxLoad(JSON.parse(res.data));
+            console.log(JSON.parse(res.data));
         })
     }, [])
+    useEffect(() => {
+        if (lcload) {
+            classification()
+        }
+
+
+    }, [classAreaShow, classDurationShow, classFluxShow,classFluxByBCShow])
     const [filter, setFilter] = useState(false);
     function filterVisibility() {
         setFilter(!filter);
@@ -81,6 +95,36 @@ function Prediction() {
         console.log(lcdata)
     }
 
+    const classification = () => {
+        var data = []
+        if (lcload) {
+            if (classFluxShow) {
+                var flux = fluxload.Peak_Flux__y_
+                var fluxClass = fluxload.Classification_by_Flux_Peak
+                data.push({ 'peak flux': flux, 'flux_class': fluxClass })
+            }
+            if (classAreaShow) {
+
+                var tempArea = lcload.area_under_curve
+                var tempAreaClass = lcload.classfication_by_area
+                data.push({ 'area_under_curve': tempArea, 'area_class': tempAreaClass })
+
+            }
+            if (classDurationShow) {
+                var duration = lcload.total_burst_time
+                var durationClass = lcload.classification_by_duration
+                data.push({ 'duration': duration, 'duration_class': durationClass })
+            }
+            if(classFluxByBCShow){
+                var flux = fluxload.Peak_Flux__y_
+                var bc = fluxload.background_count_Flux_vs_Time
+                var fluxbcclass = fluxload.Classification_by_Flux_Peak_By_Background_Count
+                data.push({ 'peak flux': flux,'background_count':bc, 'flux_bc_class': fluxbcclass })
+            }
+            setClassificationData(data)
+            console.log(data)
+        }
+    }
     // if (fluxload) {
     //     for (var i = 0; i < Object.keys(fluxload.start_coordinate__x_).length; i++) {
     //         fluxdata.push(
@@ -105,7 +149,7 @@ function Prediction() {
     //         )
     //     }
     // }
-    
+
     return (
         <>
             <Navbar />
@@ -118,24 +162,24 @@ function Prediction() {
                         </SwitchButtonWrapper>
                         {lcload ? (<ResponsiveContainer>
                             <LineChart
-                            width={500}
-                            height={400}
-                            data={lcdata}
-                            margin={{
-                                top: 10,
-                                right: 30,
-                                left: 0,
-                                bottom: 0,
-                            }}
+                                width={500}
+                                height={400}
+                                data={lcdata}
+                                margin={{
+                                    top: 10,
+                                    right: 30,
+                                    left: 0,
+                                    bottom: 0,
+                                }}
                             >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <CartesianGrid />
-                            <XAxis dataKey="x">
-                                <Label value="Time" fill="#F6C96F" offset={0} position="insideBottom" />
-                            </XAxis>
-                            <YAxis label={{ value: 'Rate', fill:"#F6C96F", angle: -90, position: 'insideLeft', textAnchor: 'middle' }}/>
-                            <Tooltip />
-                            <Line type="monotone" dataKey="y" stroke="#FFCA00" dot={<CustomizedDot />} />
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <CartesianGrid />
+                                <XAxis dataKey="x">
+                                    <Label value="Time" fill="#F6C96F" offset={0} position="insideBottom" />
+                                </XAxis>
+                                <YAxis label={{ value: 'Rate', fill: "#F6C96F", angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
+                                <Tooltip />
+                                <Line type="monotone" dataKey="y" stroke="#FFCA00" dot={<CustomizedDot />} />
                             </LineChart>
                         </ResponsiveContainer>) : <p>Loading...</p>}
                     </AreaPlotWrapper>
@@ -147,59 +191,72 @@ function Prediction() {
                     <FilterWrapper>
                         <FilterButton onClick={filterVisibility}>Filter</FilterButton>
                     </FilterWrapper>
-                    <FilterOptions style={filter ? {display: 'flex'} : {display: 'none'}}>
+                    <FilterOptions style={filter ? { display: 'flex' } : { display: 'none' }}>
                         <BR>
-                            <div style={{width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px'}}>
-                                <p style={{fontWeight: '500', fontSize: '24px', marginBottom: '23px'}}>Burst time</p>
-                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)}/>
+                            <div style={{ width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px' }}>
+                                <p style={{ fontWeight: '500', fontSize: '24px', marginBottom: '23px' }}>Burst time</p>
+                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)} />
                             </div>
-                            <div style={{width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px'}}>
-                                <p style={{fontWeight: '500', fontSize: '24px', marginBottom: '23px'}}>Rise time</p>
-                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)}/>
+                            <div style={{ width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px' }}>
+                                <p style={{ fontWeight: '500', fontSize: '24px', marginBottom: '23px' }}>Rise time</p>
+                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)} />
                             </div>
                         </BR>
                         <DP>
-                            <div style={{width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px'}}>
-                                <p style={{fontWeight: '500', fontSize: '24px', marginBottom: '23px'}}>Burst time</p>
-                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)}/>
+                            <div style={{ width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px' }}>
+                                <p style={{ fontWeight: '500', fontSize: '24px', marginBottom: '23px' }}>Burst time</p>
+                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)} />
                             </div>
-                            <div style={{width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px'}}>
-                                <p style={{fontWeight: '500', fontSize: '24px', marginBottom: '23px'}}>Rise time</p>
-                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)}/>
+                            <div style={{ width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px' }}>
+                                <p style={{ fontWeight: '500', fontSize: '24px', marginBottom: '23px' }}>Rise time</p>
+                                <MultiRangeSlider min={0} max={1000} onChange={({ min, max }) => console.log(`min = ${min}, max = ${max}`)} />
                             </div>
                         </DP>
                         <Classification>
-                            <div style={{width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px', display: 'flex', flexDirection: 'column'}}>
-                                <p style={{fontWeight: '500', fontSize: '24px', marginBottom: '23px'}}>Classification</p>
-                                <span style={{display: 'flex', flexDirection: 'row', gap: '17px'}}>
-                                    <input type="checkbox" id="Option1" name="Option1" value="Option 1" style={{marginBottom: '24px', width: '24px', height: '24px'}} />
-                                    <label for="Option1" style={{fontSize: '24px'}}>Parameter</label>
+                            <div style={{ width: '100%', paddingTop: '25.69px', paddingBottom: '25.69px', display: 'flex', flexDirection: 'column' }}>
+                                <p style={{ fontWeight: '500', fontSize: '24px', marginBottom: '23px' }}>Classification</p>
+                                <span style={{ display: 'flex', flexDirection: 'row', gap: '17px' }}>
+                                    <input type="checkbox" id="Option1" name="Option1" value="Option 1" onClick={() => {
+                                        setClassFluxShow(!classFluxShow)
+                                        console.log(classFluxShow)
+                                    }} style={{ marginBottom: '24px', width: '24px', height: '24px' }} />
+                                    <label for="Option1" style={{ fontSize: '24px' }}>Classification by Peak Flux</label>
+                                </span>
+                                <span style={{ display: 'flex', flexDirection: 'row', gap: '17px' }}>
+                                    <input type="checkbox" id="Option2" name="Option2" value={classAreaShow} onClick={() => {
+                                        setClassAreaShow(!classAreaShow)
+                                        console.log(classAreaShow)
+
+                                    }} style={{ marginBottom: '24px', width: '24px', height: '24px' }} />
+                                    <label for="Option2" style={{ fontSize: '24px' }}>Classification by Area</label>
+                                </span>
+                                <span style={{ display: 'flex', flexDirection: 'row', gap: '17px' }}>
+                                    <input type="checkbox" id="Option3" name="Option3" value="Option 3" onClick={() => {
+                                        setClassDurationShow(!classDurationShow)
+                                        console.log(classDurationShow)
+                                    }} style={{ marginBottom: '24px', width: '24px', height: '24px' }} />
+                                    <label for="Option3" style={{ fontSize: '24px' }}>Classification by Burst Duration</label>
                                 </span>
                                 <span style={{display: 'flex', flexDirection: 'row', gap: '17px'}}>
-                                    <input type="checkbox" id="Option2" name="Option2" value="Option 2" style={{marginBottom: '24px', width: '24px', height: '24px'}} />
-                                    <label for="Option2" style={{fontSize: '24px'}}>Parameter</label>
-                                </span>
-                                <span style={{display: 'flex', flexDirection: 'row', gap: '17px'}}>
-                                    <input type="checkbox" id="Option3" name="Option3" value="Option 3" style={{marginBottom: '24px', width: '24px', height: '24px'}} />
-                                    <label for="Option3" style={{fontSize: '24px'}}>Parameter</label>
-                                </span>
-                                <span style={{display: 'flex', flexDirection: 'row', gap: '17px'}}>
-                                    <input type="checkbox" id="Option4" name="Option4" value="Option 4" style={{marginBottom: '24px', width: '24px', height: '24px'}} />
-                                    <label for="Option4" style={{fontSize: '24px'}}>Parameter</label>
+                                    <input type="checkbox" id="Option4" name="Option4" value="Option 4" onClick={() => {
+                                        setClassFluxByBCShow(!classFluxByBCShow)
+                                        console.log(classFluxByBCShow)
+                                    }} style={{marginBottom: '24px', width: '24px', height: '24px'}} />
+                                    <label for="Option4" style={{fontSize: '24px'}}>Classification By Ratio of Flux Peak and Background Count</label>
                                 </span>
                             </div>
                         </Classification>
                     </FilterOptions>
                     <TableMenu>
-                        <p style={{color: '#F6C96F'}}>Burst start coordinate (x)</p>
-                        <p style={{color: '#F6C96F'}}>Burst start coordinate (y)</p>
-                        <p style={{color: '#F6C96F'}}>Burst peak coordinate (x)</p>
-                        <p style={{color: '#F6C96F'}}>Burst peak coordinate (y)</p>
-                        <p style={{color: '#F6C96F'}}>Burst end coordinate (x)</p>
-                        <p style={{color: '#F6C96F'}}>Burst end coordinate (y)</p>
-                        <p style={{color: '#F6C96F'}}>Total burst time</p>
-                        <p style={{color: '#F6C96F'}}>Rise time</p>
-                        <p style={{color: '#F6C96F'}}>Decay time</p>
+                        <p style={{ color: '#F6C96F' }}>Burst start coordinate (x)</p>
+                        <p style={{ color: '#F6C96F' }}>Burst start coordinate (y)</p>
+                        <p style={{ color: '#F6C96F' }}>Burst peak coordinate (x)</p>
+                        <p style={{ color: '#F6C96F' }}>Burst peak coordinate (y)</p>
+                        <p style={{ color: '#F6C96F' }}>Burst end coordinate (x)</p>
+                        <p style={{ color: '#F6C96F' }}>Burst end coordinate (y)</p>
+                        <p style={{ color: '#F6C96F' }}>Total burst time</p>
+                        <p style={{ color: '#F6C96F' }}>Rise time</p>
+                        <p style={{ color: '#F6C96F' }}>Decay time</p>
                     </TableMenu>
                     {/* {lcload ? <p>{lcload.start_coordinate__x_['0']}</p> : <p>Loading...</p>} */}
                     {lcload ? <LCTable props={lcload} /> : <p>Loading...</p>}
