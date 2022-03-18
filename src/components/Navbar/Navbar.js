@@ -5,8 +5,8 @@ function Navbar() {
         <NavbarWrapper>
             <Title>IIT Guwahati</Title>
             <RightPart>
-                <a style={fontXL}>Home</a>
-                <a style={fontXL}>Input</a>
+                <a href="/" style={fontXL}>Home</a>
+                <a href="/input" style={fontXL}>Input</a>
             </RightPart>
         </NavbarWrapper>
     );
@@ -35,5 +35,7 @@ const RightPart = styled.div`
 `
 
 const fontXL = {
-    fontSize: "36px"
+    fontSize: "36px",
+    textDecoration: "none",
+    color: '#fff',
 }

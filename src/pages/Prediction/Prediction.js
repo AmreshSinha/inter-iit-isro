@@ -1,70 +1,110 @@
 import styled from "styled-components";
 import Navbar from "../../components/Navbar/Navbar";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Label } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
 import Switch from "../../components/Switch/Switch";
-import Table from "../../components/Table/Table";
+import LCTable from "../../components/Table/LCTable";
 import MultiRangeSlider from '../../components/MultiRangeSlider/MultiRangeSlider';
 import { useState, useEffect } from 'react';
+import axios from "axios";
 
-const data = [
-    {
-        name: 'Page A',
-        uv: 4000,
-        pv: 2400,
-        amt: 2400,
-    },
-    {
-        name: 'Page B',
-        uv: 3000,
-        pv: 1398,
-        amt: 2210,
-    },
-    {
-        name: 'Page C',
-        uv: 2000,
-        pv: 9800,
-        amt: 2290,
-    },
-    {
-        name: 'Page D',
-        uv: 2780,
-        pv: 3908,
-        amt: 2000,
-    },
-    {
-        name: 'Page E',
-        uv: 1890,
-        pv: 4800,
-        amt: 2181,
-    },
-    {
-        name: 'Page F',
-        uv: 2390,
-        pv: 3800,
-        amt: 2500,
-    },
-    {
-        name: 'Page G',
-        uv: 3490,
-        pv: 4300,
-        amt: 2100,
-    },
-]
+const CustomizedDot = (props) => {
+    const { cx, cy, stroke, payload, value } = props;
+    if (props.payload.peak == true) {
+    return (
+        <svg x={cx - 10} y={cy - 10} width="24" height="24" xmlns="http://www.w3.org/2000/svg" fillRule="evenodd" clipRule="evenodd">
+            <path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z" fill="#FFCA00" />
+        </svg>
+    );
+    }
+    return (
+        <svg x={cx-2} y={cy-2} height="5" width="5">
+            <circle r="40" stroke="black" strokeWidth="3" fill="red" />
+        </svg>
+    );
+};
 
-function Prediction(props) {
+function Prediction() {
+    const [lcload, setlcLoad] = useState(null);
+    const [fluxload, setfluxLoad] = useState(null);
+    const [mapChangeButtonValue, setMapChangeButtonValue] = useState('');
+    const lcdata = [];
+    const fluxdata = [];
+    useEffect(() => {
+        axios.get('http://localhost:8080/api/data/lc').then(res => {
+            setlcLoad(JSON.parse(res.data));
+        })
+        axios.get('http://localhost:8080/api/data/flux').then(res => {
+            setfluxLoad(res.data);
+        })
+    }, [])
     const [filter, setFilter] = useState(false);
     function filterVisibility() {
         setFilter(!filter);
         console.log(filter);
     }
-    const [map, changeMap] = useState('map1');
+    const [map, changeMap] = useState('Flux vs Time');
     function changeMapVisibility() {
-        if (map == 'map1') {
-            changeMap('map2')
-        } else if (map == 'map2') {
-            changeMap('map1')
+        console.log('I ran!')
+        if (map == 'Rate vs Time') {
+            changeMap('Flux vs Time')
+        } else if (map == 'Flux vs Time') {
+            changeMap('Rate vs Time')
         }
     }
+
+    if (lcload) {
+        for (var i = 0; i < Object.keys(lcload.start_coordinate__x_).length; i++) {
+            lcdata.push(
+                {
+                    x: lcload.start_coordinate__x_[`${i}`],
+                    y: lcload.start_coordinate__y_[`${i}`],
+                    peak: false
+                }
+            )
+            lcdata.push(
+                {
+                    x: lcload.peak_coordinate__x_[`${i}`],
+                    y: lcload.peak_coordinate__y_[`${i}`],
+                    classfication_by_area: lcload.classfication_by_area[`${i}`],
+                    classification_by_duration: lcload.classification_by_duration[`${i}`],
+                    peak: true,
+                }
+            )
+            lcdata.push(
+                {
+                    x: lcload.end_coordinate__x_[`${i}`],
+                    y: lcload.end_coordinate__y_[`${i}`],
+                    peak: false
+                }
+            )
+        }
+        console.log(lcdata)
+    }
+
+    // if (fluxload) {
+    //     for (var i = 0; i < Object.keys(fluxload.start_coordinate__x_).length; i++) {
+    //         fluxdata.push(
+    //             {
+    //                 x: fluxload.start_coordinate__x_[`${i}`],
+    //                 y: fluxload.start_coordinate__y_[`${i}`],
+    //             }
+    //         )
+    //         fluxdata.push(
+    //             {
+    //                 x: fluxload.peak_coordinate__x_[`${i}`],
+    //                 y: fluxload.peak_coordinate__y_[`${i}`],
+    //                 classfication_by_area: fluxload.classfication_by_area[`${i}`],
+    //                 classification_by_duration: fluxload.classification_by_duration[`${i}`],
+    //             }
+    //         )
+    //         fluxdata.push(
+    //             {
+    //                 x: fluxload.end_coordinate__x_[`${i}`],
+    //                 y: fluxload.end_coordinate__y_[`${i}`],
+    //             }
+    //         )
+    //     }
+    // }
     
     return (
         <>
@@ -74,13 +114,13 @@ function Prediction(props) {
                     <AreaPlotWrapper>
                         <SwitchButtonWrapper>
                             <MapTitle>Map 1</MapTitle>
-                            <Switch />
+                            <MapChangeButton onClick={changeMapVisibility}>{map}</MapChangeButton>
                         </SwitchButtonWrapper>
-                        <ResponsiveContainer>
-                            <AreaChart
+                        {lcload ? (<ResponsiveContainer>
+                            <LineChart
                             width={500}
                             height={400}
-                            data={data}
+                            data={lcdata}
                             margin={{
                                 top: 10,
                                 right: 30,
@@ -89,14 +129,15 @@ function Prediction(props) {
                             }}
                             >
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name">
+                            <CartesianGrid />
+                            <XAxis dataKey="x">
                                 <Label value="Time" fill="#F6C96F" offset={0} position="insideBottom" />
                             </XAxis>
                             <YAxis label={{ value: 'Rate', fill:"#F6C96F", angle: -90, position: 'insideLeft', textAnchor: 'middle' }}/>
                             <Tooltip />
-                            <Area type="monotone" dataKey="uv" stroke="#FFCA00" fill="rgba(246, 201, 111, 0.3)" />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                            <Line type="monotone" dataKey="y" stroke="#FFCA00" dot={<CustomizedDot />} />
+                            </LineChart>
+                        </ResponsiveContainer>) : <p>Loading...</p>}
                     </AreaPlotWrapper>
                     <InformationCard>
                         <InformationTitle>Information</InformationTitle>
@@ -160,7 +201,8 @@ function Prediction(props) {
                         <p style={{color: '#F6C96F'}}>Rise time</p>
                         <p style={{color: '#F6C96F'}}>Decay time</p>
                     </TableMenu>
-                    <Table></Table>
+                    {/* {lcload ? <p>{lcload.start_coordinate__x_['0']}</p> : <p>Loading...</p>} */}
+                    {lcload ? <LCTable props={lcload} /> : <p>Loading...</p>}
                 </TableWrapper>
             </MainWrapper>
         </>
@@ -307,4 +349,17 @@ const Classification = styled.div`
     justify-content: space-between;
     gap: 56.5px;
     padding-right: 168px;
+`
+
+const MapChangeButton = styled.button`
+    width: fit-content;
+    height: fit-content;
+    padding: 18px 20px;
+    border-radius: 8px;
+    background: #F6C96F;
+    border: none;
+    cursor: pointer;
+    &:hover {
+        background: #F6C96Fe1;
+    }
 `
