@@ -10,12 +10,26 @@ import axios from "axios";
 
 const CustomizedDot = (props) => {
     const { cx, cy, stroke, payload, value } = props;
-    if (props.payload.peak == true) {
+    // console.log('props.payload.peak', props.payload.peak)
+    if (props.payload.peak == 'Peak') {
+        // console.log('I ran!')
         return (
             <svg x={cx - 10} y={cy - 10} width="24" height="24" xmlns="http://www.w3.org/2000/svg" fillRule="evenodd" clipRule="evenodd">
                 <path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z" fill="#FFCA00" />
             </svg>
         );
+    } else if (props.payload.peak == 'Start') {
+        return (
+            <svg x={cx - 5} y={cy - 5} height="10" width="10">
+                <circle r="40" stroke="black" strokeWidth="3" fill="blue" />
+            </svg>
+        )
+    } else if (props.payload.peak == 'End') {
+        return (
+            <svg x={cx - 5} y={cy - 5} height="10" width="10">
+                <circle r="40" stroke="black" strokeWidth="3" fill="red" />
+            </svg>
+        )
     }
     return null;
 };
@@ -24,6 +38,7 @@ function Prediction() {
     const [lcload, setlcLoad] = useState(null);
     const [fluxload, setfluxLoad] = useState(null);
     const [lcDatapoints, setlcDatapoints] = useState(null)
+    const [fluxDatapoints, setfluxDatapoints] = useState(null)
     const [mapChangeButtonValue, setMapChangeButtonValue] = useState('');
     const [classFluxShow, setClassFluxShow] = useState(false)
     const [classAreaShow, setClassAreaShow] = useState(false)
@@ -33,14 +48,17 @@ function Prediction() {
     const lcdata = [];
     const fluxdata = [];
     useEffect(() => {
-        axios.get('http://localhost:8080/api/data/lc').then(res => {
+        axios.get('http://10.150.41.82:8080/api/data/lc').then(res => {
             setlcLoad(JSON.parse(res.data));
         })
-        axios.get('http://localhost:8080/api/data/flux').then(res => {
+        axios.get('http://10.150.41.82:8080/api/data/flux').then(res => {
             setfluxLoad(JSON.parse(res.data));
         })
-        axios.get('http://localhost:8080/api/data/lcfull').then(res => {
+        axios.get('http://10.150.41.82:8080/api/data/lcfull').then(res => {
             setlcDatapoints(JSON.parse(res.data));
+        })
+        axios.get('http://10.150.41.82:8080/api/data/fluxfull').then(res => {
+            setfluxDatapoints(JSON.parse(res.data));
         })
     }, [])
     useEffect(() => {
@@ -53,7 +71,6 @@ function Prediction() {
     const [filter, setFilter] = useState(false);
     function filterVisibility() {
         setFilter(!filter);
-        console.log(filter);
     }
     const [map, changeMap] = useState('false');
     function changeMapVisibility() {
@@ -72,7 +89,7 @@ function Prediction() {
                 {
                     x: lcDatapoints.time[`${i}`],
                     y: lcDatapoints.rate[`${i}`],
-                    peak: false
+                    peak: lcDatapoints.status[`${i}`]
                 }
             )
             // lcdata.push(
@@ -92,7 +109,18 @@ function Prediction() {
             //     }
             // )
         }
-        console.log(lcdata)
+    }
+
+    if (fluxDatapoints) {
+        for (var i = 0; i < Object.keys(fluxDatapoints.time).length; i++) {
+            fluxdata.push(
+                {
+                    x: fluxDatapoints.time[`${i}`],
+                    y: fluxDatapoints.flux[`${i}`],
+                    peak: fluxDatapoints.status[`${i}`]
+                }
+            )
+        }
     }
 
     const classification = () => {
@@ -178,9 +206,9 @@ function Prediction() {
                     <AreaPlotWrapper>
                         <SwitchButtonWrapper>
                             <MapTitle>{map ? 'Rate vs Time' : 'Flux vs Time'}</MapTitle>
-                            {/* <MapChangeButton onClick={changeMapVisibility}>{map ? "Change to Flux" : "Change to Rate"}</MapChangeButton> */}
+                            <MapChangeButton onClick={changeMapVisibility}>{map ? "Change to Flux" : "Change to Rate"}</MapChangeButton>
                         </SwitchButtonWrapper>
-                        {lcload ? (<ResponsiveContainer>
+                        {lcload ? (map ? (<ResponsiveContainer>
                             <LineChart
                                 width={500}
                                 height={400}
@@ -200,7 +228,27 @@ function Prediction() {
                                 <Tooltip />
                                 <Line type="monotone" dataKey="y" stroke="#FFCA00" dot={<CustomizedDot />} />
                             </LineChart>
-                        </ResponsiveContainer>) : <p>Loading...</p>}
+                        </ResponsiveContainer>) : (<ResponsiveContainer>
+                            <LineChart
+                                width={500}
+                                height={400}
+                                data={fluxdata}
+                                margin={{
+                                    top: 10,
+                                    right: 30,
+                                    left: 0,
+                                    bottom: 0,
+                                }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="x">
+                                    <Label value="Time" fill="#F6C96F" offset={0} position="insideBottom" />
+                                </XAxis>
+                                <YAxis label={{ value: 'Flux', fill: "#F6C96F", angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
+                                <Tooltip />
+                                <Line type="monotone" dataKey="y" stroke="#FFCA00" dot={<CustomizedDot />} />
+                            </LineChart>
+                        </ResponsiveContainer>)) : <p>Loading...</p>}
                     </AreaPlotWrapper>
                     {/* <InformationCard>
                         <InformationTitle>Information</InformationTitle>

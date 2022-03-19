@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 function Table(props) {
   console.log(props);
-  console.log(Object.keys(props.props.Peak_Flux__x_).length);
+  // console.log(Object.keys(props.props.Peak_Flux__x_).length);
   var indents = [];
   for (
     var i = 0;
