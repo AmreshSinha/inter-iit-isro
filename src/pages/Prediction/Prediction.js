@@ -48,16 +48,16 @@ function Prediction() {
     const lcdata = [];
     const fluxdata = [];
     useEffect(() => {
-        axios.get('http://10.150.41.82:8080/api/data/lc').then(res => {
+        axios.get('http://localhost:8080/api/data/lc').then(res => {
             setlcLoad(JSON.parse(res.data));
         })
-        axios.get('http://10.150.41.82:8080/api/data/flux').then(res => {
+        axios.get('http://localhost:8080/api/data/flux').then(res => {
             setfluxLoad(JSON.parse(res.data));
         })
-        axios.get('http://10.150.41.82:8080/api/data/lcfull').then(res => {
+        axios.get('http://localhost:8080/api/data/lcfull').then(res => {
             setlcDatapoints(JSON.parse(res.data));
         })
-        axios.get('http://10.150.41.82:8080/api/data/fluxfull').then(res => {
+        axios.get('http://localhost:8080/api/data/fluxfull').then(res => {
             setfluxDatapoints(JSON.parse(res.data));
         })
     }, [])
