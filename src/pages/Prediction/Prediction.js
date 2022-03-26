@@ -368,7 +368,7 @@ function Prediction() {
                     <TableMenu style={{marginTop: '16px'}}>
                         <p style={{ color: '#F6C96F', width: '180px' }}>Peak flux coordinate (x)</p>
                         <p style={{ color: '#F6C96F', width: '180px' }}>Peak flux coordinate (y)</p>
-                        <p style={{ color: '#F6C96F', width: '180px' }}>Peak flux/ average ratio</p>
+                        <p style={{ color: '#F6C96F', width: '180px' }}>Background Count</p>
                         <p style={{ color: '#F6C96F', width: '180px' }}>Classification by peak flux</p>
                         <p style={{ color: '#F6C96F', width: '180px' }}>Classification by Flux Peak by Background Count</p>
                     </TableMenu>
