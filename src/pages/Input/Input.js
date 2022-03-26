@@ -29,7 +29,7 @@ function Input() {
         //     changeUploadState(uploadState=true);
         //     console.log(uploadState)
         // })
-        fetch('http://localhost:8080/api/upload', 
+        fetch('https://interiit.us.to/api/upload',
             {
                 method: 'POST',
                 body: formData
@@ -66,7 +66,9 @@ function Input() {
                 </IconButtonWrapper> : <IconButtonWrapper><InputButton disabled style={{cursor: "none"}}>Uploading...</InputButton></IconButtonWrapper>}
             </InputWrapper>
             <InputInfoWrapper>
-                File Format Support: FITS, XLS, ASCII
+                Upload zip file only!<br /><br />
+                File Format Support: FITS, XLS, ASCII<br /><br />
+                Estimated wait time: 30 - 60 seconds
             </InputInfoWrapper>
         </>
     )
